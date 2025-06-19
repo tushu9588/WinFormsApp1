@@ -10,9 +10,9 @@ public class TimesOfIndiaSitemapFetcher
 {
     private const string TodaySitemapUrl = "https://timesofindia.indiatimes.com/sitemap/today";
 
-    public async Task<List<NewsItem>> GetRecentNewsAsync()
+    public async Task<List<NewsEntry>> GetRecentNewsAsync()
     {
-        var newsList = new List<NewsItem>();
+        var newsList = new List<NewsEntry>();
 
         using (HttpClient client = new HttpClient())
         {
@@ -37,7 +37,7 @@ public class TimesOfIndiaSitemapFetcher
                     DateTime yesterday = today.AddDays(-1);
                     if (pubDate.Date == today || pubDate.Date == yesterday)
                     {
-                        newsList.Add(new NewsItem
+                        newsList.Add(new NewsEntry
                         {
                             Title = title,
                             Url = url.ToString(),

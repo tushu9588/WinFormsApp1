@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-namespace WinFormsApp1
+namespace WinFormsApp1.NewsFetcher
 {
-    public class NewsFetcher
+    public class EcomicsTimesNewsFetcher
     {
         private static readonly HttpClient client = new HttpClient();
 
@@ -15,10 +10,10 @@ namespace WinFormsApp1
         /// Asynchronously retrieves news articles from the specified sitemap URL.
         /// </summary>
         /// <param name="sitemapUrl">The URL of the XML sitemap to fetch news from.</param>
-        /// <returns>A list of NewsItem objects representing the news articles.</returns>
-        public static async Task<List<NewsItem>> GetNewsItemsAsync(string sitemapUrl)
+        /// <returns>A list of NewsEntry objects representing the news articles.</returns>
+        public static async Task<List<NewsEntry>> GetNewsEntrysAsync(string sitemapUrl)
         {
-            var newsList = new List<NewsItem>();
+            var newsList = new List<NewsEntry>();
 
             try
             {
@@ -39,9 +34,9 @@ namespace WinFormsApp1
                         // Filter to include only today's and yesterday's news
                         if (pubDate.Date == DateTime.Today || pubDate.Date == DateTime.Today.AddDays(-1))
                         {
-                            newsList.Add(new NewsItem
+                            newsList.Add(new NewsEntry
                             {
-                                Url = url,
+                                Url = url.ToString(),
                                 Title = title,
                                 PublicationDate = pubDate
                             });

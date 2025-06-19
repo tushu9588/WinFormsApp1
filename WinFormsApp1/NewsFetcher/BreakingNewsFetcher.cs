@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace WinFormsApp1
+namespace WinFormsApp1.NewsFetcher
 {
     public class BreakingNewsFetcher
     {
@@ -16,10 +16,10 @@ namespace WinFormsApp1
         /// Asynchronously fetches the latest breaking news items.
         /// </summary>
         /// <returns>A list of breaking news items.</returns>
-        public static async Task<List<BreakingNewsItem>> GetBreakingNewsAsync()
+        public static async Task<List<NewsEntry>> GetBreakingNewsAsync()
         {
             string url = "https://economictimes.indiatimes.com/etstatic/breakingnews/etjson_bnews.html";
-            var result = new List<BreakingNewsItem>();
+            var result = new List<NewsEntry>();
 
             try
             {
@@ -32,7 +32,7 @@ namespace WinFormsApp1
                 if (match.Success)
                 {
                     string json = match.Groups[1].Value;
-                    result = JsonConvert.DeserializeObject<List<BreakingNewsItem>>(json);
+                    result = JsonConvert.DeserializeObject<List<NewsEntry>>(json);
                 }
             }
             catch (Exception ex)
