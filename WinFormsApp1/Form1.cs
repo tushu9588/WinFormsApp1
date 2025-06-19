@@ -13,7 +13,7 @@ namespace WinFormsApp1
             InitializeComponent();
         }
 
-        // 🔄 Form Load Event
+        
         private async void Form1_Load(object sender, EventArgs e)
         {
             try
