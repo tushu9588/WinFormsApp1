@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WinFormsApp1
+namespace WinFormsApp1.DB
 {
     public class NewsDatabaseSaver
     {
@@ -23,7 +23,7 @@ namespace WinFormsApp1
         /// Includes support for the 'Type' field (e.g., TOI, Regular, Breaking).
         /// </summary>
         /// <param name="newsList">List of news items to save.</param>
-        public void SaveNewsToDatabase(List<NewsItem> newsList)
+        public void SaveNewsToDatabase(List<NewsEntry> newsList)
         {
             if (newsList == null || newsList.Count == 0)
             {
