@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinFormsApp1.DB;
 using WinFormsApp1.NewsFetcher;
 
 namespace WinFormsApp1
