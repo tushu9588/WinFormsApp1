@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Configuration;
 using WinFormsApp1.DB;
 using WinFormsApp1.NewsFetcher;
 
@@ -15,43 +11,40 @@ namespace WinFormsApp1
             InitializeComponent();
         }
 
-
         private async void Form1_Load(object sender, EventArgs e)
         {
-            // 🔴 1. Fetch Breaking News
-            this.Text = "Fetching Breaking News...";
-            var breakingNews = await BreakingNewsFetcher.GetBreakingNewsAsync();
+            this.Text = "Fetching news...";
 
-            this.Text = "Fetching today’s Economic Times news...";
-            var todayNews = await EcomicsTimesNewsFetcher.GetNewsEntrysAsync("https://m.economictimes.com/sitemap/today");
+            // ⏱ Fetch all news sources concurrently
+            var breakingNewsTask = BreakingNewsFetcher.GetBreakingNewsAsync();
+            var todayNewsTask = EcomicsTimesNewsFetcher.GetNewsEntrysAsync("https://m.economictimes.com/sitemap/today");
+            var yesterdayNewsTask = EcomicsTimesNewsFetcher.GetNewsEntrysAsync("https://m.economictimes.com/sitemap/yesterday");
+            var toiFetcher = new TimesOfIndiaSitemapFetcher();
+            var toiNewsTask = toiFetcher.GetRecentNewsAsync();
 
-            this.Text = "Fetching yesterday’s Economic Times news...";
-            var yesterdayNews = await EcomicsTimesNewsFetcher.GetNewsEntrysAsync("https://m.economictimes.com/sitemap/yesterday");
-
-            var fetcher = new TimesOfIndiaSitemapFetcher();
-            var news = await fetcher.GetRecentNewsAsync();
-
+            await Task.WhenAll(breakingNewsTask, todayNewsTask, yesterdayNewsTask, toiNewsTask);
 
             var allNews = new List<NewsEntry>();
-            allNews.AddRange(news);
-            allNews.AddRange(breakingNews);
-            allNews.AddRange(todayNews);
-            allNews.AddRange(yesterdayNews);
+            allNews.AddRange(breakingNewsTask.Result);
+            allNews.AddRange(todayNewsTask.Result);
+            allNews.AddRange(yesterdayNewsTask.Result);
+            allNews.AddRange(toiNewsTask.Result);
 
-            this.Text = $"📋 Total ET News Fetched: {allNews.Count}";
+            this.Text = $"📋 Total News Fetched: {allNews.Count}";
 
             if (allNews.Count > 0)
             {
                 string connStr = ConfigurationManager.ConnectionStrings["MyDbConnection"].ConnectionString;
                 var dbSaver = new NewsDatabaseSaver(connStr);
-                dbSaver.SaveNewsToDatabase(allNews);
-                this.Text = "✅ Economic Times news saved to database.";
+
+                // ⏳ Run DB saving off the UI thread to avoid UI freezing
+                await Task.Run(() => dbSaver.SaveNewsToDatabase(allNews));
+                this.Text = "News saved to database.";
             }
             else
             {
-                this.Text = "⚠️ No Economic Times news found.";
+                this.Text = "No news found.";
             }
         }
     }
 }
-
